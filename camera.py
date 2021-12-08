@@ -5,6 +5,9 @@ import pandas as pd
 from mtcnn import MTCNN
 import numpy as np
 import matplotlib.pyplot as plt
+import glob
+from sklearn.preprocessing import LabelBinarizer
+
 
 model = tf.keras.models.load_model('saved_model/my_model')
 
@@ -130,13 +133,53 @@ def mask_recognize(img):
 	print(predict_x)
 	classes_x = np.argmax(predict_x,axis=1)
 	return classes_x
-	
+
+
+def train():
+	imdir0 = '/Users/gary/Desktop/Dataset/without_mask/'
+	imdir1 = '/Users/gary/Desktop/Dataset/with_mask/'
+	imdir2 = '/Users/gary/Desktop/Dataset/mask_weared_incorrect/'
+
+	ext = ['png']  # Add image formats here
+
+	for i in range(3):
+		files = []
+		if (i == 0):
+			[files.extend(glob.glob((imdir0) + '*.' + e)) for e in ext]
+			without_mask_img = [cv2.cvtColor(cv2.imread(file), cv2.COLOR_BGR2RGB) for file in files]
+		if (i == 1):
+			[files.extend(glob.glob((imdir1) + '*.' + e)) for e in ext]
+			with_mask_img = [cv2.cvtColor(cv2.imread(file), cv2.COLOR_BGR2RGB) for file in files]
+		if (i == 2):
+			[files.extend(glob.glob((imdir2) + '*.' + e)) for e in ext]
+			mask_weared_incorrect_img = [cv2.cvtColor(cv2.imread(file), cv2.COLOR_BGR2RGB) for file in files]
+
+	without_mask_img = np.array(without_mask_img)  # shape = (2994, 128, 128, 3) for all of the categories
+	with_mask_img = np.array(with_mask_img)
+	mask_weared_incorrect_img = np.array(mask_weared_incorrect_img)
+
+	complete_data_set = np.concatenate((without_mask_img, with_mask_img, mask_weared_incorrect_img))
+	# shape = (8982, 128, 128, 3)
+	# print(complete_data_set.shape)
+	labels = []
+	for i in range(3):
+		for j in range(2994):
+			labels.append(i)
+
+	lb = LabelBinarizer()
+	labels = lb.fit_transform(labels)
+
+
+
 if __name__ == "__main__":
 
 	#img = cv2.cvtColor(cv2.imread("img_with_face_mask.png"), cv2.COLOR_BGR2RGB)
 	#img = np.array([img])
 	#print(img.shape)
 	harr_rec()
+
+
+
 	
 
 	
