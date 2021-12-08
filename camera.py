@@ -1,8 +1,10 @@
 import cv2
 import time
 import tensorflow as tf
+import pandas as pd
 from mtcnn import MTCNN
 import numpy as np
+import matplotlib.pyplot as plt
 
 model = tf.keras.models.load_model('saved_model/my_model')
 
@@ -65,6 +67,7 @@ def face_rec():
 	cv2.destroyAllWindows()
 
 def harr_rec():
+	#print(model.summary())
 	cv2.namedWindow("preview", cv2.WINDOW_AUTOSIZE)
 	vc = cv2.VideoCapture(0)
 
@@ -77,16 +80,32 @@ def harr_rec():
 		#time.sleep( 0.2 )
 		#print(frame.shape)
 		faces = detect(frame)
-		mask = mask_recognize(frame)
+		#mask = mask_recognize(frame)
+
+
 		#frame = frame[0:720, 320: 960, :]
 		#frame = cv2.resize(frame, (128, 128))
 		cv2.rectangle(frame, (320,2), (960,718), color=(255, 255, 255), thickness=2)
-		print(mask)
+
 		for x, y, width, height in faces:
+
+			img= frame[y:y + height,x:x + width, :]
+			if img.shape[0] == 0 or img.shape[1] == 0 or img.shape[2] == 0:
+				continue
+			print(img.shape)
+			mask = mask_recognize(img)
+
+			print(mask)
+			print(x,y,width, height)
 			# 这里的color是 蓝 黄 红，与rgb相反，thickness设置宽度
-			if mask == 2:
-				cv2.rectangle(frame, (x, y), (x + width, y + height), color=(0, 255, 0), thickness=2)
+			if mask == 1:
+				# green
+				cv2.rectangle(frame, (x, y), (x + width, y + height), color=(0, 255,0), thickness=2)
+			elif mask == 2:
+				#yellow
+				cv2.rectangle(frame, (x, y), (x + width, y + height), color=(0, 255, 255), thickness=2)
 			else:
+				#red
 				cv2.rectangle(frame, (x, y), (x + width, y + height), color=(0, 0, 255), thickness=2)
 		cv2.imshow("preview", frame)
 		rval, frame = vc.read()
@@ -96,15 +115,24 @@ def harr_rec():
 	vc.release()
 
 def mask_recognize(img):
+
+
 	frame = img.copy()
-	frame = frame[0:720, 320: 960, :]
+
+	#frame = frame[0:720, 320: 960, :]
 	frame = cv2.resize(frame, (128, 128))
+	cv2.imwrite("test.png", frame)
+	plt.imshow(frame)
 	frame = np.array([frame])
+
 	predict_x = model.predict(frame)
+
+	print(predict_x)
 	classes_x = np.argmax(predict_x,axis=1)
 	return classes_x
 	
 if __name__ == "__main__":
+
 	#img = cv2.cvtColor(cv2.imread("img_with_face_mask.png"), cv2.COLOR_BGR2RGB)
 	#img = np.array([img])
 	#print(img.shape)
