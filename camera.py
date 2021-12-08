@@ -6,6 +6,10 @@ from mtcnn import MTCNN
 import numpy as np
 import matplotlib.pyplot as plt
 import glob
+import tensorflow.keras.layers as tfl
+
+
+from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelBinarizer
 
 
@@ -69,7 +73,7 @@ def face_rec():
 	video_capture.release()
 	cv2.destroyAllWindows()
 
-def harr_rec():
+def harr_rec(model):
 	#print(model.summary())
 	cv2.namedWindow("preview", cv2.WINDOW_AUTOSIZE)
 	vc = cv2.VideoCapture(0)
@@ -85,7 +89,6 @@ def harr_rec():
 		faces = detect(frame)
 		#mask = mask_recognize(frame)
 
-
 		#frame = frame[0:720, 320: 960, :]
 		#frame = cv2.resize(frame, (128, 128))
 		cv2.rectangle(frame, (320,2), (960,718), color=(255, 255, 255), thickness=2)
@@ -96,7 +99,7 @@ def harr_rec():
 			if img.shape[0] == 0 or img.shape[1] == 0 or img.shape[2] == 0:
 				continue
 			print(img.shape)
-			mask = mask_recognize(img)
+			mask = mask_recognize(img, model)
 
 			print(mask)
 			print(x,y,width, height)
@@ -117,7 +120,7 @@ def harr_rec():
 			break
 	vc.release()
 
-def mask_recognize(img):
+def mask_recognize(img, model):
 
 
 	frame = img.copy()
@@ -126,6 +129,8 @@ def mask_recognize(img):
 	frame = cv2.resize(frame, (128, 128))
 	cv2.imwrite("test.png", frame)
 	plt.imshow(frame)
+	frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+
 	frame = np.array([frame])
 
 	predict_x = model.predict(frame)
@@ -169,6 +174,24 @@ def train():
 	lb = LabelBinarizer()
 	labels = lb.fit_transform(labels)
 
+	X_train, X_test, y_train, y_test = train_test_split(complete_data_set, labels, test_size=0.3, random_state=42)
+	model = tf.keras.Sequential([
+		tfl.ZeroPadding2D(padding=3, input_shape=(128, 128, 3)),  # input image is 128*128*3
+		tfl.Conv2D(32, 7, 1),
+		tfl.BatchNormalization(3),
+		tfl.ReLU(),
+		tfl.MaxPooling2D(),
+		tfl.Flatten(),
+		tfl.Dense(3, 'softmax')
+	])
+
+	model.compile(optimizer='adam',
+				  loss='categorical_crossentropy',
+				  metrics=['accuracy'])
+	history = model.fit(X_train, y_train, validation_data=(X_test, y_test), batch_size=50, epochs=15, verbose=1)
+
+	model.save('saved_model/my_model')
+	return model
 
 
 if __name__ == "__main__":
@@ -176,7 +199,7 @@ if __name__ == "__main__":
 	#img = cv2.cvtColor(cv2.imread("img_with_face_mask.png"), cv2.COLOR_BGR2RGB)
 	#img = np.array([img])
 	#print(img.shape)
-	harr_rec()
+	harr_rec(model)
 
 
 
