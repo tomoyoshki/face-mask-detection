@@ -30,19 +30,19 @@ In the era of COVID-19, although with vaccines, the primary line of defense stil
 ```
 Project
 ├── saved_model
-│	├──	cnn_model 						# saved model used for CNN model
+│	├── cnn_model 				# saved model used for CNN model
 │		├── keras_metadata.pd   
 │		└── saved_model.pb
-│   ├──	resnet_model					# saved model used for ResNet model
+│   	├── resnet_model			# saved model used for ResNet model
 │		└── model.pth
-├── assets								# assets
+├── assets					# assets
 │	├── two_classes.gif
 	└── three_classes.gif
-├── camera.py 							# CNN network
-├── camera2.py 							# resNet work
-├── CNNfromScratch.ipynb				# CNN from scratch training and predicting
-├── haarcascade_frontalface_default.xml	# face detection harrcascade source file
-└── mask_detection_3.ipynb 				# ResNet training and predicting
+├── camera.py 					# CNN network
+├── camera2.py 					# resNet
+├── CNNfromScratch.ipynb			# CNN from scratch training and predicting
+├── haarcascade_frontalface_default.xml		# face detection harrcascade source file
+└── mask_detection_3.ipynb 			# ResNet training and predicting
 
 ```
 
@@ -77,7 +77,7 @@ We implemented a CNN model from scratch with Tensorflow for our two classes mask
 
 #### ResNet 34
 
-We also applied ResNet 34 model for the three classes mask classifier. We expect the user to first run the CNN model, and then try this ResNet 34 model. We have uploaded the model file correlated with the GIF under the `saved_model/resnet_model` directory. However, the `model.load()` function is currently losing information. Therefore, to achieve the best result, we are also offering the Jupyter notebook (`mask_detection_3.ipynb `) we used. This notebook provides GPU support, so you can easily train them and produce the desirable outcome.
+We also applied ResNet 34 model for the three classes mask classifier. We expect the user to first run the CNN model, and then try this ResNet 34 model. We have uploaded the model file correlated with the GIF under the `saved_model/resnet_model` directory. You could directly run the `camera2.py` file. However, the `model.load()` function is currently losing information. Therefore, to achieve the best result, we are also offering the Jupyter notebook (`mask_detection_3.ipynb `) we used. This notebook provides GPU support, so you can easily train them and produce the desirable outcome.
 
 ## Contact
 
