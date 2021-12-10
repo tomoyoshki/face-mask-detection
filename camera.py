@@ -13,7 +13,7 @@ from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelBinarizer
 
 
-model = tf.keras.models.load_model('saved_model/my_model')
+model = tf.keras.models.load_model('saved_model/CNN_model')
 
 def detect(image):
 	image_gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
@@ -190,7 +190,7 @@ def train():
 				  metrics=['accuracy'])
 	history = model.fit(X_train, y_train, validation_data=(X_test, y_test), batch_size=50, epochs=15, verbose=1)
 
-	model.save('saved_model/my_model')
+	model.save('saved_model/CNN_model')
 	return model
 
 
