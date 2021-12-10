@@ -130,7 +130,7 @@ fontScale = 0.8
 # Line thickness of 2 px
 thickness = 1
 
-model = torch.load("saved_model_cameraTest/model.pth", map_location='cpu')
+model = torch.load("resnet_model/model.pth", map_location='cpu')
 
 
 if __name__ == "__main__":
