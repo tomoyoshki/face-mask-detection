@@ -71,9 +71,12 @@ We used the `opencv` built-in `CascadeClassifier` with Haar Cascade data source 
 
 ### Project flow
 
-#### CNN from Scratch
+#### CNN from Scratch + CNN Classifier
 
-We implemented a CNN model from scratch with Tensorflow for our two classes mask classifier.  
+We implemented the convolution and max pooling part of the CNN from scratch. We recommend you to look at it and
+understand the .
+We then utilized Tensorflow framework for our two classes mask classifier. We have uploaded the model file correlated
+with the GIF under the `saved_model/CNN_model` directory. You could directly run the `camera.py` file.
 
 #### ResNet 34
 
